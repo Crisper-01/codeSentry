@@ -7,8 +7,8 @@ cloned into a per-language Docker sandbox; every pull request targeting one of
 the repository's watched branches is built and tested there, then reviewed by
 an LLM pipeline (LangGraph) that checks the diff against its linked issue,
 writes the release notes, and proposes the tests the change is missing. The
-result is posted as a single markdown comment on the pull request, and — when
-enabled — passing generated tests are opened as a follow-up pull request.
+result is posted as a single markdown comment on the pull request, and, when
+enabled, passing generated tests are opened as a follow-up pull request.
 
 The same pipeline is driven either by the interactive shell or automatically
 by a GitHub webhook on `pull_request` events.
@@ -25,7 +25,7 @@ by a GitHub webhook on `pull_request` events.
 
 ## Quickstart
 
-1. Start the language sandboxes — builds and tests run inside them:
+1. Start the language sandboxes; builds and tests run inside them:
 
    ```bash
    docker compose -f containers/docker-compose.yml up -d cpp-sandbox rust-sandbox
@@ -86,7 +86,7 @@ fetch_context -> checkout_pr -> build_and_test -+-> post_feedback          (buil
 
 ## Configuration
 
-One JSON file per repository, bound with `set config` — examples in
+One JSON file per repository, bound with `set config`. Examples live in
 [`configs/`](configs):
 
 ```json
@@ -98,11 +98,11 @@ One JSON file per repository, bound with `set config` — examples in
 }
 ```
 
-* `watched_branches` — a pull request is reviewed only when its **target**
+* `watched_branches` - a pull request is reviewed only when its **target**
   branch is listed here.
-* `build.mode` / `test.mode` — `cmake`, `gcc`, `cargo` / `cargo test`,
+* `build.mode` / `test.mode` - `cmake`, `gcc`, `cargo` / `cargo test`,
   `cmake test`, or `custom` with an explicit `command`.
-* `auto_test_pr` — when `true`, passing generated tests are pushed as a
+* `auto_test_pr` - when `true`, passing generated tests are pushed as a
   follow-up pull request; by default they are only suggested in the comment.
 
 Environment variables (`GITHUB_TOKEN`, `SENTRY_LLM_PROVIDER`, `SENTRY_STATE_FILE`, …)
@@ -122,7 +122,7 @@ background thread; the same `(repo, head_sha)` is never reviewed twice.
 cd sentry && python -m pytest
 ```
 
-117 tests, no Docker, no GitHub and no LLM key required — every external
+117 tests, no Docker, no GitHub and no LLM key required; every external
 dependency is faked.
 
 ## Demo
@@ -130,5 +130,5 @@ dependency is faked.
 [`demo/ring-buffer`](demo/ring-buffer/README.md) is a small Rust crate whose
 `drain` has an off-by-one bug on the wrap-around path that its committed tests
 do not reach. Push it to a repository you own, open a PR against `main`, and
-the generated wrap-around test will fail against the branch — something real
+the generated wrap-around test will fail against the branch: something real
 for the test generator to find.
