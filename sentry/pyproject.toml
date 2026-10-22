@@ -1,0 +1,44 @@
+[project]
+name = "sentry"
+version = "0.2.0"
+description = "CodeSentry agentic CI/CD reviewer for C++/Rust pull requests"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "httpx>=0.28.0",
+    "prompt-toolkit>=3.0.0",
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.32.0",
+    "pydantic>=2.9.0",
+    "langgraph>=0.2.60",
+    "anthropic>=0.40.0",
+    "openai>=1.60.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.3.0",
+]
+
+[tool.setuptools]
+py-modules = [
+    "main",
+    "github_handler",
+    "container_manager",
+    "repository_store",
+    "repo_config",
+    "webhook",
+    "llm",
+    "prompts",
+    "review_graph",
+]
+
+[project.scripts]
+codesentry = "main:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+# Only plain test functions here; without this, pytest tries to collect the
+# TestMode enum and the TestPlan model as test classes.
+python_classes = []

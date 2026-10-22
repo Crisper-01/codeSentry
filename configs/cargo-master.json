@@ -1,0 +1,5 @@
+{
+  "watched_branches": ["master"],
+  "build": { "mode": "cargo" },
+  "test": { "mode": "cargo test" }
+}

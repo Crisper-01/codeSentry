@@ -1,0 +1,6 @@
+{
+  "watched_branches": ["main", "develop"],
+  "build": { "mode": "cargo" },
+  "test": { "mode": "cargo test" },
+  "auto_test_pr": true
+}

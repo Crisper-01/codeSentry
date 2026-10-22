@@ -1,0 +1,59 @@
+services:
+  cpp-sandbox:
+    build:
+      context: .
+      dockerfile: Dockerfile.cpp
+    image: codesentry-cpp:latest
+    container_name: codesentry-cpp
+    working_dir: /workspace
+    command: sleep infinity
+    restart: unless-stopped
+
+  rust-sandbox:
+    build:
+      context: .
+      dockerfile: Dockerfile.rust
+    image: codesentry-rust:latest
+    container_name: codesentry-rust
+    working_dir: /workspace
+    command: sleep infinity
+    restart: unless-stopped
+
+  sentry:
+    build:
+      context: ../sentry
+      dockerfile: Dockerfile
+    image: codesentry-sentry:latest
+    container_name: codesentry-sentry
+    working_dir: /app
+    depends_on:
+      - cpp-sandbox
+      - rust-sandbox
+    environment:
+      GITHUB_TOKEN: ${GITHUB_TOKEN:-}
+      GITHUB_WEBHOOK_SECRET: ${GITHUB_WEBHOOK_SECRET:-}
+      SENTRY_WEBHOOK_HOST: "0.0.0.0"
+      SENTRY_WEBHOOK_PORT: "8080"
+      SENTRY_STATE_FILE: /state/repos.json
+      # Review nodes. Without a key the sandbox still builds and tests the PR,
+      # but intent, release notes and test generation are skipped.
+      SENTRY_LLM_PROVIDER: ${SENTRY_LLM_PROVIDER:-anthropic}
+      SENTRY_LLM_MODEL: ${SENTRY_LLM_MODEL:-}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      SENTRY_COMMAND_TIMEOUT: ${SENTRY_COMMAND_TIMEOUT:-1800}
+    ports:
+      - "8080:8080"
+    volumes:
+      # docker exec into sibling sandboxes by container name
+      - /var/run/docker.sock:/var/run/docker.sock
+      # host paths used by `set config <repo> <path>` must be visible here
+      - ${SENTRY_CONFIG_DIR:-../configs}:/configs:ro
+      # the watched-repository registry survives a restart
+      - sentry-state:/state
+    stdin_open: true
+    tty: true
+    restart: unless-stopped
+
+volumes:
+  sentry-state:
